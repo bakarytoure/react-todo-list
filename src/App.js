@@ -1,55 +1,74 @@
 import React, { Component } from "react";
-import "@fortawesome/fontawesome-free/css/all.min.css";
 import uuid from "uuid";
+import "@fortawesome/fontawesome-free/css/all.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import TodoInput from "./components/TodoInput";
 import TodoList from "./components/TodoList";
-//show
 class App extends Component {
   state = {
-    items: [
-      { id: 1, title: "bakary" },
-      { id: 2, title: "bakary" },
-      { id: 3, title: "bakary" }
-    ],
+    items: [],
     id: uuid(),
     item: "",
     editItem: false
   };
   handleChange = e => {
-    console.log("handleChange");
+    this.setState({
+      item: e.target.value
+    });
   };
   handleSubmit = e => {
-    console.log("handleSubmit");
+    e.preventDefault();
+    const newItem = {
+      id: this.state.id,
+      title: this.state.item
+    };
+    const updatedItems = [...this.state.items, newItem];
+
+    this.setState({
+      items: updatedItems,
+      item: "",
+      id: uuid(),
+      editItem: false
+    });
   };
-  ClearList = () => {
-    console.log("Clear list");
+  clearList = () => {
+    this.setState({
+      items: []
+    });
   };
-  handeDelete = id => {
-    console.log(`handle delete ${id}`);
+  handleDelete = id => {
+    const filteredItems = this.state.items.filter(item => item.id !== id);
+    this.setState({
+      items: filteredItems
+    });
   };
-  handeEdit = id => {
-    console.log(`handle edit ${id}`);
+  handleEdit = id => {
+    const filteredItems = this.state.items.filter(item => item.id !== id);
+    const selectedItem = this.state.items.find(item => item.id === id);
+    this.setState({
+      items: filteredItems,
+      item: selectedItem.title,
+      id: id,
+      editItem: true
+    });
   };
   render() {
-    console.log(this.state);
     return (
-      <div>
-        <div className="container">
-          <div className="row">
-            <div className="col-10 mx-auto col-md-8 mt-4">
-              <h3 className="text-capitalize text-center">todo input</h3>
-            </div>
+      <div className="container">
+        <div className="row">
+          <div className="col-10 mx-auto col-md-8 mt-5">
+            <h3 className="text-capitalize text-center">todo input</h3>
             <TodoInput
               item={this.state.item}
               handleChange={this.handleChange}
               handleSubmit={this.handleSubmit}
-              editItem={this.editItem}
+              editItem={this.state.editItem}
             />
             <TodoList
               items={this.state.items}
-              ClearList={this.ClearList}
-              handeDelete={this.handeDelete}
+              clearList={this.clearList}
+              handleDelete={this.handleDelete}
+              handleEdit={this.handleEdit}
             />
           </div>
         </div>
